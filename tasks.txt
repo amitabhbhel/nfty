@@ -1,0 +1,12 @@
+*************************************************
+Keys to be added in opt chain array
+ce_tv
+pe_tv
+ce_changeinOi
+pe_changeinOi
+ce_range
+pe_range
+maxpain
+ce_m
+ce_m  movement
+*************************************************
