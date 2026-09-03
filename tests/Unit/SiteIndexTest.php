@@ -14,6 +14,6 @@ class SiteIndexTest extends TestCase
     public function test_example(): void
     {
         $siteIndex = new SiteController();
-        $this->assertTrue($siteIndex->index());
+        $this->assertTrue($siteIndex->ins());
     }
 }

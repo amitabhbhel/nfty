@@ -16,15 +16,9 @@ class Upstox
      */
     public function __construct()
     {
-        // $api_key = env('API_KEY');
-        // $api_secret = env('API_SECRET');
-        // $user_id = env('4RANCS');
-        // $analytic_token = env('ANALYTIC_TOKEN');
-
         // Configure OAuth2 access token
         $this->config = Configuration::getDefaultConfiguration()
             ->setAccessToken(env('ANALYTIC_TOKEN'));
-
     }
 
 
@@ -85,12 +79,11 @@ class Upstox
     private function processChainData($array){
         $chain = [];
         foreach ($array as $k => $v) {
-            // normalize multilvevl array in single level array
             $chain[$k] = $this->normalizeArrayWithKeys($v);
         }
         return $chain;        
     }
-    
+    // normalize multilvevl array in single level array    
     function normalizeArrayWithKeys($array, $prefix = '') {
         $row = [];    
         foreach($array as $key => $value) {

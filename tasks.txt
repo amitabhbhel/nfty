@@ -6,7 +6,12 @@ ce_changeinOi
 pe_changeinOi
 ce_range
 pe_range
-maxpain
 ce_m
 ce_m  movement
+maxpain
+pcr individual strikes
 *************************************************
+Intrinsic intrinsic_value
+ce spot-strike if +ve else zero max(0, spot-strike)
+pe strike-spot if +ve else zero max(0, strike-spot)
+time_value = premium - intrinsic_value
