@@ -80,11 +80,21 @@ class Upstox
         $chain = [];
         foreach ($array as $k => $v) {
             $chain[$k] = $this->normalizeArrayWithKeys($v);
+            
+            // add oi_change in chain data
+            $chain[$k]['ce_oi_change'] = $chain[$k]['ce_oi'] - $chain[$k]['ce_prev_oi'];
+            $chain[$k]['pe_oi_change'] = $chain[$k]['pe_oi'] - $chain[$k]['pe_prev_oi'];
+
+            // add time value in chain date
+            [$chain[$k]['ce_tv'], $chain[$k]['pe_tv']] = $this->timeValue($chain[$k]);
+
+            // remove unwanted keys from chain data
+            // $chain[$k] = $this->removeUnwantedKeys($chain[$k]);
         }
         return $chain;        
     }
     // normalize multilvevl array in single level array    
-    function normalizeArrayWithKeys($array, $prefix = '') {
+    private function normalizeArrayWithKeys($array, $prefix = '') {
         $row = [];    
         foreach($array as $key => $value) {
             $newKey = $prefix ? $prefix : (($key == "call_options") ? 'ce_' : ($key == "put_options" ? "pe_" : ""));
@@ -96,6 +106,24 @@ class Upstox
             }  
         }
         return $row;
+    }
+    // calculate time value
+    private function timeValue($item){
+        $ce_iv = max(($item['underlying_spot_price'] - $item['strike_price']), 0);
+        $pe_iv = max(($item['strike_price'] - $item['underlying_spot_price']), 0);
+
+        $item['ce_tv'] = round($item['ce_ltp'] > 0 ? $item['ce_ltp'] - $ce_iv : 0, 2);
+        $item['pe_tv'] = round($item['pe_ltp'] > 0 ? $item['pe_ltp'] - $pe_iv : 0, 2);
+
+        return [$item['ce_tv'], $item['pe_tv']];
+    }
+    // remove unwanted keys
+    private function removeUnwantedKeys($item){
+        $keys = ['underlying_key', 'underlying_spot_price'];
+        foreach ($keys as $key) {
+            unset($item[$key]);
+        }
+        return $item;
     }
 
 
