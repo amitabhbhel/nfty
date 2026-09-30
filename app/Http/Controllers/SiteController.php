@@ -10,6 +10,7 @@ use App\Upstox;
 class SiteController extends Controller
 {
     function home(){
+        return view('home');
         return view('welcome');
     }
 
