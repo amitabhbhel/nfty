@@ -1,17 +1,33 @@
 *************************************************
 Keys to be added in opt chain array
-ce_tv
-pe_tv
-ce_changeinOi
-pe_changeinOi
+ce_tv --done
+pe_tv --done
+ce_changeinOi --done
+pe_changeinOi --done
 ce_range
 pe_range
 ce_m
 ce_m  movement
 maxpain
-pcr individual strikes
+pcr individual strikes --done
 *************************************************
 Intrinsic intrinsic_value
 ce spot-strike if +ve else zero max(0, spot-strike)
 pe strike-spot if +ve else zero max(0, strike-spot)
 time_value = premium - intrinsic_value
+
+
+***************************************************************
+Update for new version
+
+add folowing fields in status
+ce_oi for 5 and 3 strikes
+pe_oi for 5 and 3 strikes
+ce_tv for 5 and 3 strikes
+pe_tv for 5 and 3 strikes
+ce-atm price
+ce-otm price
+ce-itm price
+pe-atm price
+pe-otm price
+pe-itm price
