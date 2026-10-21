@@ -31,3 +31,6 @@ ce-itm price
 pe-atm price
 pe-otm price
 pe-itm price
+
+include instrumetn_id and status_id in the table for preparing chart 
+for intraday as well as continuous with multiple expiries

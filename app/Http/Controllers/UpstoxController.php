@@ -31,9 +31,9 @@ class UpstoxController extends Controller
 
     private function analyseAndSaveChainData($chain){
         $columns_to_analyse = [
-            'ce_oi', 'pe_oi',
+            'ce_oi',        'pe_oi',
             'ce_oi_change', 'pe_oi_change',
-            'ce_volume', 'pe_volume',            
+            'ce_volume',    'pe_volume',            
         ];
 
         [$status, $chain] = $this->analyseChainData(
@@ -41,6 +41,9 @@ class UpstoxController extends Controller
             $columns_to_analyse,
         );
         $status =  $this->analyseSupAndRes($status);
+
+        $status = $this->pcr($status, $chain);
+
         return [$status, $chain];
     }
 
@@ -107,6 +110,42 @@ class UpstoxController extends Controller
         return $status;
     }
 
+
+
+    /**
+     * PCR Calculation
+     */
+    function pcr($status, $chain)
+    {
+        // $chain = collect($chain);
+        $base = $chain->get(intdiv($chain->count(),2) +1)['strike_price'] - $chain->get(intdiv($chain->count(),2))['strike_price'];
+        $chain = $chain->whereBetween('strike_price', [$status['line']-$base*3, $status['line']+$base*3]);
+
+        $ce_chain = $chain->where('strike_price', ">=", $status['line']);
+        $status['calls_oi'] = $chain->where('strike_price', ">=", $status['line'])->sum('ce_oi');
+        $status['calls_oi_change'] = $chain->where('strike_price', ">=", $status['line'])->sum('ce_oi_change');
+        $status['calls_tv'] = (string) $ce_chain->sum('ce_tv');
+
+        $pe_chain = $chain->where('strike_price', "<=", $status['line']);
+        $status['puts_oi'] = $chain->where('strike_price', ">=", $status['line'])->sum('pe_oi');
+        $status['puts_oi_change'] = $chain->where('strike_price', ">=", $status['line'])->sum('pe_oi_change');
+        $status['puts_tv'] = (string) $pe_chain->sum('pe_tv');
+
+
+        // atm, otm and itm prices
+        $atm = $chain->where('strike_price', $status['line']);
+        $otm = $chain->where('strike_price', $status['line'] + $base);
+        $itm = $chain->where('strike_price', $status['line'] - $base);
+
+        // set ce-atm, ce-otm, ce-itm, pe-atm, pe-otm, pe-itm prices
+        foreach (['ce', 'pe'] as $i) {
+            foreach (['atm', 'otm', 'itm'] as $j) {
+                $status[$i.'_'.$j] = $$j->sum($i.'_ltp');
+            }
+        }
+
+        return $status;
+    }
 
 
 
